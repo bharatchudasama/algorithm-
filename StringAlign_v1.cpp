@@ -1,68 +1,67 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-void stringAlign(vector<vector<int>>& dp, const string& x, const string& y) {
-    int delta = 2;
+void alignStrings(vector<vector<int>>& Table, const string& str1, const string& str2) {
+    int gap = 2;
     
     // Vowel checking
-    vector<int> ifvow(26, 0);
-    string vows = "aeiou"; 
-    for (auto e : vows) {
-        ifvow[e - 'a'] = 1;
+    vector<int> vc(26, 0);
+    string vowels = "aeiou"; 
+    for (auto vowel : vowels) {
+        vc[vowel - 'a'] = 1;
     }
 
     // Mismatch cost matrix
-    vector<vector<int>> alph(26, vector<int>(26, 0));
+    vector<vector<int>> mc(26, vector<int>(26, 0));
     for (int i = 0; i < 26; i++) {
         for (int j = 0; j < 26; j++) {
             if (i == j) 
-                alph[i][j] = 0;         // Same 
-            else if (ifvow[i] == ifvow[j]) 
-                alph[i][j] = 1;         // vowel-vowel or consonant-consonant
+                mc[i][j] = 0;         // Same characters 
+            else if (vc[i] == vc[j]) 
+                mc[i][j] = 1;         // vowel-vowel or consonant-consonant 
             else 
-                alph[i][j] = 3;         // vowel-consonant or consonant-vowel
+                mc[i][j] = 3;         // vowel-consonant or consonant-vowel
         }
     }
 
-    // base cases
-    for (int i = 0; i <= x.size(); i++) {
-        dp[i][0] = i * delta;
+    // base case
+    for (int i = 0; i <= str1.size(); i++) {
+        Table[i][0] = i * gap; 
     }
-    for (int j = 0; j <= y.size(); j++) {
-        dp[0][j] = j * delta;  
+    for (int j = 0; j <= str2.size(); j++) {
+        Table[0][j] = j * gap;  
     }
 
-    // Fill the DP table using the recurrence
-    for (int i = 1; i <= x.size(); i++) {
-        for (int j = 1; j <= y.size(); j++) {
-            int c1 = dp[i - 1][j - 1] + alph[x[i - 1] - 'a'][y[j - 1] - 'a']; 
-            int c2 = dp[i - 1][j] + delta; 
-            int c3 = dp[i][j - 1] + delta; 
-            dp[i][j] = min(c1, min(c2, c3)); 
+    for (int i = 1; i <= str1.size(); i++) {
+        for (int j = 1; j <= str2.size(); j++) {
+            int c1 = Table[i - 1][j - 1] + mc[str1[i - 1] - 'a'][str2[j - 1] - 'a']; 
+            int c2 = Table[i - 1][j] + gap; 
+            int c3 = Table[i][j - 1] + gap; 
+            Table[i][j] = min(c1, min(c2, c3)); 
         }
     }
 }
 
 int main() {
-    string a = "name";
-    string b = "naem";
+    string fString = "name";
+    string sString = "naem";
     
-    // Dp table
-    vector<vector<int>> dp(a.size() + 1, vector<int>(b.size() + 1, 0));
-    
-   
-    stringAlign(dp, a, b);
 
-  
-    cout << "DP Table after function call:" << endl;
-    for (int i = 0; i <= a.size(); i++) {
-        for (int j = 0; j <= b.size(); j++) {
-            cout << dp[i][j] << " ";
+    vector<vector<int>> Table(fString.size() + 1, vector<int>(sString.size() + 1, 0));
+    
+    alignStrings(Table, fString, sString);
+
+
+    cout << "Cost Table after function call:" << endl;
+    for (int i = 0; i <= fString.size(); i++) {
+        for (int j = 0; j <= sString.size(); j++) {
+            cout << Table[i][j] << " ";
         }
         cout << endl;
     }
-  
-    cout << "Minimum alignment cost: " << dp[a.size()][b.size()] << endl;
+
+
+    cout << "Minimum alignment cost: " << Table[fString.size()][sString.size()] << endl;
 
     return 0;
 }
