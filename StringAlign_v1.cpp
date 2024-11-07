@@ -3,9 +3,9 @@ using namespace std;
 
 void stringAlign(vector<vector<int>>& dp, string x, string y){
     int delta = 2;
-
+    //creating vector 
     vector<int> ifvow(26, 0);
-    string vows = "aeiou";
+    string vows = "aeiou"; 
     for(auto e : vows){
         ifvow[e - 'a'] = 1;
     }
